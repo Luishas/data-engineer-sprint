@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-def load_to_postgres(df: pd.DataFrame, table_name: str =  "raw_orders"):
+def load_to_postgres(df: pd.DataFrame, table_name:str):
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
     host = os.getenv("DB_HOST", "127.0.0.1")
