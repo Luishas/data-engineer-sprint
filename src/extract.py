@@ -1,12 +1,13 @@
 import pandas as pd
 import logging
 from pathlib import Path
+from typing import Optional, Union
 
 logging.basicConfig(level=logging.INFO)
 
 BASE_DIR = Path(__file__).resolve().parent.parent 
 
-def extract_orders(path: str = None) -> pd.DataFrame:
+def extract_orders(path: Optional[Union[str, Path]] = None) -> pd.DataFrame:
     if path is None:
         path = BASE_DIR / "data" / "raw" / "olist_orders_dataset.csv"
     try:
