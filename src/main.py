@@ -2,6 +2,7 @@ import logging
 from  extract import extract_csv
 from  transform import transform_generic
 from  load import load_to_postgres
+from data_quality import check_nulls, check_duplicates, check_range, check_referential_integrity
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -19,11 +20,27 @@ TABLES = [
 
 def run_pipeline():
     logging.info("Starting ETL pipeline - orders")
+    dataframes = {}
+
     for t in TABLES:
         logging.info(f"--- Processing {t['table']} ---")
         df_raw = extract_csv(t["file"])
         df_clean = transform_generic(df_raw, t["key"]) if t["key"] else df_raw
         load_to_postgres(df_clean, table_name=t["table"])
+
+        dataframes[t["table"]] = df_clean
+
+        if t["key"]:
+            nulls = check_nulls(df_clean, t["key"])
+            duplicates = check_duplicates(df_clean, t["key"])
+            if nulls > 0 or duplicates > 0:
+                logging.warning(f"{t['table']}: {nulls} nulls, {duplicates} duplicates detected after post-transformation checks")
+
+    huerfan = check_referential_integrity(
+        dataframes["raw_order_items"], dataframes["raw_orders"],
+        "order_id", "order_id"
+    )
+    logging.info(f"order_items integrity check(no match in orders): {huerfan}")
     logging.info("ETL pipeline completed successfully: 9 uploaded tables")
 
 if __name__ == "__main__":

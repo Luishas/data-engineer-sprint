@@ -13,7 +13,7 @@ def load_to_postgres(df: pd.DataFrame, table_name:str):
     user = os.getenv("DB_USER")
     password = os.getenv("DB_PASSWORD")
     host = os.getenv("DB_HOST", "127.0.0.1")
-    port = os.getenv("DB_PORT", "5432")
+    port = os.getenv("DB_PORT_DOCKER", "5433")
     dbname = os.getenv("DB_NAME")
 
     logging.info(f"Connecting to host={host} port={port} db={dbname} user={user}")
