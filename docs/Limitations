@@ -1,0 +1,5 @@
+## Limitación conocida: estrategia de carga
+Actualmente el pipeline usa `if_exists="replace"` (full reload), adecuado
+para este sprint de aprendizaje. En producción con datos incrementales
+diarios, se debería migrar a un patrón UPSERT (INSERT ... ON CONFLICT
+DO UPDATE) para no perder historial y procesar solo datos nuevos/cambiados.
